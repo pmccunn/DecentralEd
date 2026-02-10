@@ -431,9 +431,8 @@
                     float dayMix = smoothstep(-0.1, 0.3, NdotL);
                     vec4 dayColor = texture2D(dayMap, vUv);
                     vec4 nightColor = texture2D(nightMap, vUv);
-                    // City lights: warm yellow dots
-                    float lightVal = max(nightColor.r, max(nightColor.g, nightColor.b));
-                    vec3 cityLights = vec3(1.0, 0.82, 0.36) * lightVal * 2.5;
+                    // City lights: contrast curve isolates bright cities from dark areas
+                    vec3 cityLights = pow(nightColor.rgb, vec3(2.0)) * 8.0;
                     // Day side: natural satellite imagery, muted
                     vec3 daySurface = dayColor.rgb * 0.35;
                     // Night side: deep black
