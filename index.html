@@ -396,7 +396,7 @@
         const earthGeo = new THREE.SphereGeometry(1, 128, 128);
 
         // Sun behind and to the side — mostly dark facing side, city lights dominate
-        const sunDir = new THREE.Vector3(-4, 1, -3).normalize();
+        const sunDir = new THREE.Vector3(-3, 0.5, 1).normalize();
 
         const earthMat = new THREE.ShaderMaterial({
             uniforms: {
@@ -431,13 +431,8 @@
                     float dayMix = smoothstep(-0.02, 0.2, NdotL);
                     vec4 dayColor = texture2D(dayMap, vUv);
                     vec4 nightColor = texture2D(nightMap, vUv);
-                    // City lights: warm amber/gold like the video reference
-                    float lightIntensity = max(nightColor.r, max(nightColor.g, nightColor.b));
-                    nightColor.rgb = vec3(
-                        lightIntensity * 1.4,
-                        lightIntensity * 0.85,
-                        lightIntensity * 0.3
-                    ) * 2.8;
+                    // City lights: keep NASA texture natural colors, slight warm boost
+                    nightColor.rgb *= vec3(1.15, 1.0, 0.8) * 2.5;
                     // Dark side base: very faint continent hint
                     vec3 darkBase = dayColor.rgb * 0.04;
                     vec3 nightSide = darkBase + nightColor.rgb;
@@ -529,7 +524,7 @@
 
         // Lighting — dim, mostly from behind
         const sun = new THREE.DirectionalLight(0xffffff, 0.3);
-        sun.position.set(-5, 0.5, -3);
+        sun.position.set(-3, 0.5, 1);
         scene.add(sun);
         scene.add(new THREE.AmbientLight(0x030508, 0.1));
 
