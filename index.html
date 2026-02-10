@@ -396,7 +396,7 @@
         const earthGeo = new THREE.SphereGeometry(1, 128, 128);
 
         // Sun behind and to the side — mostly dark facing side, city lights dominate
-        const sunDir = new THREE.Vector3(-3, 0.5, 1).normalize();
+        const sunDir = new THREE.Vector3(-3, 0.5, 0.2).normalize();
 
         const earthMat = new THREE.ShaderMaterial({
             uniforms: {
@@ -431,13 +431,13 @@
                     float dayMix = smoothstep(-0.02, 0.2, NdotL);
                     vec4 dayColor = texture2D(dayMap, vUv);
                     vec4 nightColor = texture2D(nightMap, vUv);
-                    // City lights: keep NASA texture natural colors, slight warm boost
-                    nightColor.rgb *= vec3(1.15, 1.0, 0.8) * 2.5;
-                    // Dark side base: very faint continent hint
-                    vec3 darkBase = dayColor.rgb * 0.04;
+                    // City lights: natural warm boost, brighter so they pop in dark areas
+                    nightColor.rgb *= vec3(1.2, 1.0, 0.75) * 3.5;
+                    // Dark side: faint continent hint + bright city lights
+                    vec3 darkBase = dayColor.rgb * 0.03;
                     vec3 nightSide = darkBase + nightColor.rgb;
-                    // Day side: dim, muted — just enough to see the edge
-                    dayColor.rgb *= 0.18;
+                    // Day side: deeper natural blue/green — pull down cyan, push blues deeper
+                    dayColor.rgb *= vec3(0.55, 0.7, 0.6) * 0.2;
                     vec3 color = mix(nightSide, dayColor.rgb, dayMix);
                     gl_FragColor = vec4(color, 1.0);
                 }
@@ -524,7 +524,7 @@
 
         // Lighting — dim, mostly from behind
         const sun = new THREE.DirectionalLight(0xffffff, 0.3);
-        sun.position.set(-3, 0.5, 1);
+        sun.position.set(-3, 0.5, 0.2);
         scene.add(sun);
         scene.add(new THREE.AmbientLight(0x030508, 0.1));
 
