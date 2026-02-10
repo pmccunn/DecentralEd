@@ -379,7 +379,8 @@
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.setClearColor(0x000000, 0);
-        renderer.toneMapping = THREE.NoToneMapping;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.0;
         container.appendChild(renderer.domElement);
 
         function resize() {
@@ -395,7 +396,7 @@
         const earthGeo = new THREE.SphereGeometry(1, 128, 128);
 
         // Sun behind and to the side — mostly dark facing side, city lights dominate
-        const sunDir = new THREE.Vector3(-3, 0.2, 0).normalize();
+        const sunDir = new THREE.Vector3(-3, 0.2, -1.2).normalize();
 
         const earthMat = new THREE.ShaderMaterial({
             uniforms: {
@@ -430,13 +431,13 @@
                     float dayMix = smoothstep(-0.1, 0.3, NdotL);
                     vec4 dayColor = texture2D(dayMap, vUv);
                     vec4 nightColor = texture2D(nightMap, vUv);
-                    // City lights: warm yellow/gold clusters
+                    // City lights: warm yellow dots
                     float lightVal = max(nightColor.r, max(nightColor.g, nightColor.b));
-                    vec3 cityLights = vec3(1.0, 0.82, 0.36) * lightVal * 6.0;
-                    // Day side: natural muted satellite imagery
-                    vec3 daySurface = dayColor.rgb * 0.45;
-                    // Night side: nearly pure black
-                    vec3 nightBase = dayColor.rgb * 0.008;
+                    vec3 cityLights = vec3(1.0, 0.82, 0.36) * lightVal * 2.5;
+                    // Day side: natural satellite imagery, muted
+                    vec3 daySurface = dayColor.rgb * 0.35;
+                    // Night side: deep black
+                    vec3 nightBase = dayColor.rgb * 0.005;
                     vec3 earthColor = mix(nightBase, daySurface, dayMix);
                     // City lights: full on dark side, completely gone on day side
                     vec3 color = earthColor + cityLights * (1.0 - dayMix);
@@ -524,8 +525,8 @@
         earth.add(new THREE.Mesh(rimGeo, rimMat));
 
         // Lighting — dim, mostly from behind
-        const sun = new THREE.DirectionalLight(0xfff5e6, 0.6);
-        sun.position.set(-3, 0.2, 0);
+        const sun = new THREE.DirectionalLight(0xfff5e6, 0.5);
+        sun.position.set(-3, 0.2, -1.2);
         scene.add(sun);
         scene.add(new THREE.AmbientLight(0x050810, 0.1));
 
