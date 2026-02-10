@@ -379,8 +379,7 @@
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.setClearColor(0x000000, 0);
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 0.8;
+        renderer.toneMapping = THREE.NoToneMapping;
         container.appendChild(renderer.domElement);
 
         function resize() {
@@ -396,7 +395,7 @@
         const earthGeo = new THREE.SphereGeometry(1, 128, 128);
 
         // Sun behind and to the side — mostly dark facing side, city lights dominate
-        const sunDir = new THREE.Vector3(-3, 0, -0.3).normalize();
+        const sunDir = new THREE.Vector3(-3, 0.2, 0).normalize();
 
         const earthMat = new THREE.ShaderMaterial({
             uniforms: {
@@ -525,8 +524,8 @@
         earth.add(new THREE.Mesh(rimGeo, rimMat));
 
         // Lighting — dim, mostly from behind
-        const sun = new THREE.DirectionalLight(0xfff5e6, 0.5);
-        sun.position.set(-3, 0, -0.3);
+        const sun = new THREE.DirectionalLight(0xfff5e6, 0.6);
+        sun.position.set(-3, 0.2, 0);
         scene.add(sun);
         scene.add(new THREE.AmbientLight(0x050810, 0.1));
 
