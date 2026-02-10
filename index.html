@@ -427,19 +427,20 @@
                 void main() {
                     vec3 normal = normalize(vNormal);
                     float NdotL = dot(normal, sunDirection);
-                    // Smooth terminator transition
-                    float dayMix = smoothstep(-0.05, 0.25, NdotL);
+                    // Natural terminator transition
+                    float dayMix = smoothstep(-0.1, 0.3, NdotL);
                     vec4 dayColor = texture2D(dayMap, vUv);
                     vec4 nightColor = texture2D(nightMap, vUv);
-                    // City lights: natural warm white/yellow — no orange tint
-                    vec3 cityLights = nightColor.rgb * 5.0;
-                    // Day side: natural satellite colors, like Google Earth
-                    vec3 daySurface = dayColor.rgb * 0.7;
-                    // Night side: very dark with faint continent shapes
-                    vec3 nightBase = dayColor.rgb * 0.02;
+                    // City lights: warm yellow/gold clusters
+                    float lightVal = max(nightColor.r, max(nightColor.g, nightColor.b));
+                    vec3 cityLights = vec3(1.0, 0.82, 0.36) * lightVal * 6.0;
+                    // Day side: natural muted satellite imagery
+                    vec3 daySurface = dayColor.rgb * 0.45;
+                    // Night side: nearly pure black
+                    vec3 nightBase = dayColor.rgb * 0.008;
                     vec3 earthColor = mix(nightBase, daySurface, dayMix);
-                    // City lights additive — full on dark side, fade on lit side
-                    vec3 color = earthColor + cityLights * (1.0 - dayMix * 0.9);
+                    // City lights: full on dark side, completely gone on day side
+                    vec3 color = earthColor + cityLights * (1.0 - dayMix);
                     gl_FragColor = vec4(color, 1.0);
                 }
             `
@@ -524,10 +525,10 @@
         earth.add(new THREE.Mesh(rimGeo, rimMat));
 
         // Lighting — dim, mostly from behind
-        const sun = new THREE.DirectionalLight(0xffffff, 0.8);
+        const sun = new THREE.DirectionalLight(0xfff5e6, 0.5);
         sun.position.set(-3, 0, -0.3);
         scene.add(sun);
-        scene.add(new THREE.AmbientLight(0x0a1020, 0.15));
+        scene.add(new THREE.AmbientLight(0x050810, 0.1));
 
         // Animation
         function animate() {
