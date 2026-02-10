@@ -431,14 +431,14 @@
                     float dayMix = smoothstep(-0.02, 0.2, NdotL);
                     vec4 dayColor = texture2D(dayMap, vUv);
                     vec4 nightColor = texture2D(nightMap, vUv);
-                    // City lights: natural warm boost, brighter so they pop in dark areas
-                    nightColor.rgb *= vec3(1.2, 1.0, 0.75) * 3.5;
-                    // Dark side: faint continent hint + bright city lights
+                    // City lights as separate additive layer
+                    vec3 cityLights = nightColor.rgb * vec3(1.2, 1.0, 0.75) * 3.5;
+                    // Earth surface: dark base on night side, deep blue/green on day
                     vec3 darkBase = dayColor.rgb * 0.03;
-                    vec3 nightSide = darkBase + nightColor.rgb;
-                    // Day side: deeper natural blue/green — pull down cyan, push blues deeper
-                    dayColor.rgb *= vec3(0.55, 0.7, 0.6) * 0.2;
-                    vec3 color = mix(nightSide, dayColor.rgb, dayMix);
+                    vec3 daySurface = dayColor.rgb * vec3(0.55, 0.7, 0.6) * 0.2;
+                    vec3 earthColor = mix(darkBase, daySurface, dayMix);
+                    // City lights always visible — full on dark side, fade on lit side
+                    vec3 color = earthColor + cityLights * (1.0 - dayMix * 0.85);
                     gl_FragColor = vec4(color, 1.0);
                 }
             `
