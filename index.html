@@ -396,7 +396,7 @@
         const earthGeo = new THREE.SphereGeometry(1, 128, 128);
 
         // Sun behind and to the side — mostly dark facing side, city lights dominate
-        const sunDir = new THREE.Vector3(-3, 0.2, 0.3).normalize();
+        const sunDir = new THREE.Vector3(-2, 0.2, 0.5).normalize();
 
         const earthMat = new THREE.ShaderMaterial({
             uniforms: {
@@ -433,8 +433,8 @@
                     vec4 nightColor = texture2D(nightMap, vUv);
                     // City lights: contrast curve isolates bright cities from dark areas
                     vec3 cityLights = pow(nightColor.rgb, vec3(2.0)) * 8.0;
-                    // Day side: natural satellite imagery, muted
-                    vec3 daySurface = dayColor.rgb * 0.35;
+                    // Day side: full natural satellite imagery
+                    vec3 daySurface = dayColor.rgb * 1.2;
                     // Night side: deep black
                     vec3 nightBase = dayColor.rgb * 0.005;
                     vec3 earthColor = mix(nightBase, daySurface, dayMix);
@@ -525,7 +525,7 @@
 
         // Lighting — dim, mostly from behind
         const sun = new THREE.DirectionalLight(0xfff5e6, 0.5);
-        sun.position.set(-3, 0.2, 0.3);
+        sun.position.set(-2, 0.2, 0.5);
         scene.add(sun);
         scene.add(new THREE.AmbientLight(0x050810, 0.1));
 
